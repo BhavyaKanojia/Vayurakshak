@@ -3,16 +3,13 @@ import {
   Sparkles, 
   Cpu, 
   Brain, 
-  CheckCircle2, 
   Copy, 
   Check, 
   X, 
-  AlertOctagon, 
   Bus, 
   Stethoscope, 
   UserCheck, 
-  Layers,
-  Zap
+  Zap 
 } from 'lucide-react';
 import { getGRAPStage } from '../services/grapRules';
 
@@ -20,9 +17,7 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
   const grap = getGRAPStage(aqi);
   const [activeTab, setActiveTab] = useState('executive');
   const [copied, setCopied] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
-  // Generate contextual AI advice
   const getAIContent = () => {
     if (grap.stage >= 4) {
       return {
@@ -105,13 +100,6 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
 
   const aiContent = getAIContent();
 
-  const handleRegenerate = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-    }, 600);
-  };
-
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -119,111 +107,97 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0c1222] border border-indigo-500/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
         
         {/* Header */}
-        <div className="p-5 border-b border-white/10 bg-slate-900/90 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-600 text-white shadow-md shadow-indigo-500/25">
-              <Sparkles className="w-5 h-5" />
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="brand-icon-box" style={{ width: '38px', height: '38px', background: 'linear-gradient(135deg, #6366f1, #a855f7)' }}>
+              <Sparkles size={18} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-white font-heading">
-                  Amazon Bedrock — AI Principal Advisory Copilot
-                </h2>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '1.15rem', color: 'white' }}>Amazon Bedrock AI Copilot</h2>
+                <span className="brand-badge" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', borderColor: 'rgba(168, 85, 247, 0.4)' }}>
                   Claude 3 Haiku
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                Synthesizing real-time statutory advice for {school.shortName} (AQI {aqi} • {grap.shortCode})
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Principal directives synthesis for {school.shortName} (GRAP {grap.shortCode})
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all"
-          >
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="btn-icon-refresh" style={{ padding: '6px 8px' }}>
+            <X size={18} />
           </button>
         </div>
 
         {/* Tab Selector */}
-        <div className="p-3 bg-slate-950/60 border-b border-white/10 flex items-center gap-2 overflow-x-auto">
+        <div style={{ padding: '10px 24px', background: 'rgba(10, 16, 30, 0.9)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', gap: '8px', overflowX: 'auto' }}>
           <button
             onClick={() => setActiveTab('executive')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
-              activeTab === 'executive'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200 bg-slate-900/60'
-            }`}
+            className={`nav-pill-btn ${activeTab === 'executive' ? 'active' : ''}`}
+            style={{ flexShrink: 0 }}
           >
-            <Brain className="w-3.5 h-3.5" />
-            <span>Executive Legal Directives</span>
+            <Brain size={14} />
+            <span>Executive Mandate</span>
           </button>
-
           <button
             onClick={() => setActiveTab('transport')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
-              activeTab === 'transport'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200 bg-slate-900/60'
-            }`}
+            className={`nav-pill-btn ${activeTab === 'transport' ? 'active' : ''}`}
+            style={{ flexShrink: 0 }}
           >
-            <Bus className="w-3.5 h-3.5" />
-            <span>Fleet & Transport Route</span>
+            <Bus size={14} />
+            <span>Transport Fleet</span>
           </button>
-
           <button
             onClick={() => setActiveTab('medical')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
-              activeTab === 'medical'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200 bg-slate-900/60'
-            }`}
+            className={`nav-pill-btn ${activeTab === 'medical' ? 'active' : ''}`}
+            style={{ flexShrink: 0 }}
           >
-            <Stethoscope className="w-3.5 h-3.5" />
-            <span>Infirmary & Vulnerable Students</span>
+            <Stethoscope size={14} />
+            <span>Infirmary Protocol</span>
           </button>
-
           <button
             onClick={() => setActiveTab('staff')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
-              activeTab === 'staff'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200 bg-slate-900/60'
-            }`}
+            className={`nav-pill-btn ${activeTab === 'staff' ? 'active' : ''}`}
+            style={{ flexShrink: 0 }}
           >
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>Staff & Facility Management</span>
+            <UserCheck size={14} />
+            <span>Staff Management</span>
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 flex-1 overflow-y-auto space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-indigo-300 font-mono">
-              <Cpu className="w-4 h-4" />
-              <span>Prompt: CAQM GRAP Rulebook + Live Station Telemetry</span>
+        {/* Modal Body */}
+        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c084fc' }}>
+              <Cpu size={14} />
+              <span>Inference: Bedrock AWS Foundation Model Runtime</span>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">
-              Latency: 142ms • Bedrock Zero-Bill Free Tier
-            </span>
+            <span style={{ fontFamily: 'var(--font-mono)' }}>Zero-Bill Free Tier</span>
           </div>
 
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {aiContent[activeTab]?.map((item, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-xl bg-slate-900/80 border border-white/10 flex items-start gap-3 hover:border-indigo-500/30 transition-all"
+                style={{
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  background: 'var(--bg-card-inner)',
+                  border: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px'
+                }}
               >
-                <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, flexShrink: 0, marginTop: '2px' }}>
                   {idx + 1}
                 </div>
-                <p className="text-xs text-slate-200 leading-relaxed font-sans">
+                <p style={{ fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
                   {item}
                 </p>
               </div>
@@ -231,18 +205,19 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-slate-900 border-t border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Zap className="w-4 h-4 text-amber-400" />
-            <span>Powered by Amazon Bedrock generative LLM inference pipeline</span>
+        {/* Modal Footer */}
+        <div className="modal-footer">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8' }}>
+            <Zap size={14} color="#f59e0b" />
+            <span>Autonomous generative compliance guidance</span>
           </div>
 
           <button
             onClick={() => handleCopy(aiContent[activeTab]?.join('\n\n'))}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all"
+            className="btn-broadcast-cta"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
             <span>{copied ? 'Copied Directives!' : 'Copy Directives'}</span>
           </button>
         </div>

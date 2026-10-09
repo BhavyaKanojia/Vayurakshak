@@ -2,24 +2,29 @@ import React from 'react';
 import { School, MapPin, Users, Bus, ArrowRight, ShieldCheck, Activity } from 'lucide-react';
 import { DELHI_NCR_SCHOOLS } from '../services/schoolsData';
 
-export default function SchoolDirectory({ selectedSchool, onSelectSchool, currentAqi }) {
+export default function SchoolDirectory({ selectedSchool, onSelectSchool }) {
   return (
-    <div className="space-y-6">
-      <div className="glass-panel p-6 border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <School className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-xl font-bold text-white font-heading">
-              Delhi-NCR Monitored Schools & CAAQMS Air Stations
-            </h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      
+      {/* Directory Header */}
+      <div className="glass-card">
+        <div className="card-header" style={{ marginBottom: 0 }}>
+          <div className="card-title-group">
+            <School size={22} color="#06b6d4" />
+            <div>
+              <h2 className="card-title" style={{ fontSize: '1.25rem' }}>
+                Delhi-NCR Monitored Schools & CAAQMS Stations Network
+              </h2>
+              <p className="card-subtitle">
+                Automated compliance monitoring coverage across key industrial and educational hubs
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Real-time environmental compliance network covering key high-risk zones across Delhi, Noida, and Gurugram
-          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Schools Cards Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '16px' }}>
         {DELHI_NCR_SCHOOLS.map((school) => {
           const isSelected = school.id === selectedSchool.id;
 
@@ -27,56 +32,62 @@ export default function SchoolDirectory({ selectedSchool, onSelectSchool, curren
             <div
               key={school.id}
               onClick={() => onSelectSchool(school)}
-              className={`glass-panel p-5 border cursor-pointer transition-all duration-200 flex flex-col justify-between ${
-                isSelected
-                  ? 'border-cyan-400 ring-2 ring-cyan-500/40 bg-slate-800/80 shadow-lg shadow-cyan-500/15 -translate-y-1'
-                  : 'border-white/10 hover:border-white/20 hover:bg-slate-900/80'
-              }`}
+              className="glass-card"
+              style={{
+                cursor: 'pointer',
+                borderColor: isSelected ? '#06b6d4' : 'var(--border-subtle)',
+                background: isSelected ? 'rgba(30, 41, 59, 0.9)' : 'var(--bg-card)',
+                boxShadow: isSelected ? '0 0 20px rgba(6, 182, 212, 0.2)' : 'var(--shadow-card)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                padding: '20px'
+              }}
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-white/10">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', padding: '2px 8px', background: 'rgba(15,23,42,0.9)', borderRadius: '4px', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.2)' }}>
                     {school.zone}
                   </span>
                   {isSelected && (
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/40 flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" /> ACTIVE
+                    <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#34d399', background: 'rgba(16,185,129,0.15)', padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(16,185,129,0.35)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <ShieldCheck size={12} /> ACTIVE
                     </span>
                   )}
                 </div>
 
-                <h3 className="text-base font-bold text-white font-heading mb-1.5 leading-snug">
+                <h3 style={{ fontSize: '1.05rem', color: 'white', marginBottom: '8px' }}>
                   {school.name}
                 </h3>
 
-                <div className="space-y-1.5 text-xs text-slate-300 mb-4">
-                  <div className="flex items-start gap-1.5 text-slate-400">
-                    <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
-                    <span className="line-clamp-1">{school.address}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem', color: '#cbd5e1', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94a3b8' }}>
+                    <MapPin size={14} color="#64748b" style={{ flexShrink: 0 }} />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{school.address}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <Activity className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                    <span>Station: <strong className="text-slate-200">{school.stationName}</strong></span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94a3b8' }}>
+                    <Activity size={14} color="#06b6d4" style={{ flexShrink: 0 }} />
+                    <span>Station: <strong style={{ color: '#e2e8f0' }}>{school.stationName}</strong></span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/10 text-xs text-slate-300 font-mono">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-slate-400" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', fontSize: '0.75rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Users size={14} />
                     <span>{school.studentStrength.toLocaleString()} Students</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Bus className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{school.transportBuses} Bus Fleet</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Bus size={14} />
+                    <span>{school.transportBuses} Buses</span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-cyan-400 font-semibold">
+              <div style={{ marginTop: '16px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: '#06b6d4', fontWeight: 600 }}>
                 <span>Principal: {school.principal}</span>
-                <div className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  <span>Monitor</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span>Switch Campus</span>
+                  <ArrowRight size={14} />
                 </div>
               </div>
             </div>

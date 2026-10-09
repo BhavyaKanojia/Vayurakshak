@@ -9,11 +9,7 @@ import {
   Code2, 
   Copy, 
   Check, 
-  ArrowRight, 
-  ShieldCheck, 
   Zap,
-  Activity,
-  Layers,
   DollarSign
 } from 'lucide-react';
 
@@ -24,10 +20,10 @@ export default function AWSArchitecture() {
   const nodes = [
     {
       id: 'open-meteo',
-      title: 'Open-Meteo / CPCB API',
-      category: 'Data Source',
+      title: 'Open-Meteo & CPCB API',
+      category: 'Data Feeds',
       icon: Radio,
-      color: 'from-sky-500 to-blue-600',
+      color: '#06b6d4',
       description: 'Free public real-time atmospheric pollutant feeds (PM2.5, PM10, NO2, CO, SO2, O3) for Delhi-NCR school coordinates without API keys.',
       payload: {
         endpoint: "https://air-quality-api.open-meteo.com/v1/air-quality",
@@ -41,9 +37,9 @@ export default function AWSArchitecture() {
     {
       id: 'eventbridge',
       title: 'Amazon EventBridge',
-      category: 'Serverless Scheduler',
+      category: 'Cron Scheduler',
       icon: Zap,
-      color: 'from-amber-500 to-orange-600',
+      color: '#f59e0b',
       description: 'Automated recurring cron scheduler firing every 15 minutes to trigger the ingestion Lambda handler across all Delhi-NCR monitored schools.',
       payload: {
         rule_name: "VayuRakshakTelemetryCron",
@@ -58,7 +54,7 @@ export default function AWSArchitecture() {
       title: 'AWS Lambda (Ingest)',
       category: 'Compute (Python 3.12)',
       icon: Cpu,
-      color: 'from-orange-500 to-amber-600',
+      color: '#f97316',
       description: 'Serverless microservice executing CPCB NAQI Indian Standard breakpoint formula calculations and pushing normalized telemetry records into DynamoDB.',
       payload: {
         function_name: "VayuRakshak-AQI-Ingest",
@@ -74,8 +70,8 @@ export default function AWSArchitecture() {
       title: 'Amazon DynamoDB',
       category: 'NoSQL Database',
       icon: Database,
-      color: 'from-blue-600 to-indigo-700',
-      description: 'Ultra-low latency serverless table storing historical time-series school AQI observations with partition key `school_id` and sort key `timestamp`.',
+      color: '#3b82f6',
+      description: 'Ultra-low latency serverless table storing historical time-series school AQI observations with partition key school_id and sort key timestamp.',
       payload: {
         table_name: "SchoolAQITelemetry",
         partition_key: "school_id (String)",
@@ -88,9 +84,9 @@ export default function AWSArchitecture() {
     {
       id: 'lambda-advisory',
       title: 'AWS Lambda (Advisory)',
-      category: 'Compliance & AI Broker',
+      category: 'Compliance Broker',
       icon: Cpu,
-      color: 'from-purple-500 to-indigo-600',
+      color: '#8b5cf6',
       description: 'Evaluates active CAQM GRAP Stage I–IV statutory mandates, formats prompt payloads for Amazon Bedrock, and triggers SNS emergency alerts.',
       payload: {
         function_name: "VayuRakshak-Advisory-Bedrock",
@@ -103,9 +99,9 @@ export default function AWSArchitecture() {
     {
       id: 'bedrock',
       title: 'Amazon Bedrock (Claude 3)',
-      category: 'Generative AI Foundation Model',
+      category: 'Generative AI',
       icon: Sparkles,
-      color: 'from-pink-500 to-purple-600',
+      color: '#ec4899',
       description: 'Synthesizes context-aware bilingual parent WhatsApp circulars (English + Hindi) and tailored principal operational directives for school leadership.',
       payload: {
         model_id: "anthropic.claude-3-haiku-20240307-v1:0",
@@ -118,9 +114,9 @@ export default function AWSArchitecture() {
     {
       id: 'sns',
       title: 'Amazon SNS',
-      category: 'Push Notifications',
+      category: 'Push Alerts',
       icon: Radio,
-      color: 'from-red-500 to-rose-600',
+      color: '#ef4444',
       description: 'Instant multi-channel emergency alert dispatcher sending automated SMS & email notifications when hazardous GRAP Stage IV is breached.',
       payload: {
         topic_arn: "arn:aws:sns:us-east-1:123456789012:VayuRakshak-GRAP-Emergency-Alerts",
@@ -134,8 +130,8 @@ export default function AWSArchitecture() {
       title: 'AWS Amplify Hosting',
       category: 'Web Deployment & CDN',
       icon: Cloud,
-      color: 'from-teal-500 to-emerald-600',
-      description: 'Continuous deployment hosting the React + Tailwind single-page dashboard with global edge CDN distribution and instant public HTTPS.',
+      color: '#10b981',
+      description: 'Continuous deployment hosting the React single-page dashboard with global edge CDN distribution and instant public HTTPS.',
       payload: {
         framework: "React + Vite",
         cdn_distribution: "Amazon CloudFront Global Edge",
@@ -155,53 +151,53 @@ export default function AWSArchitecture() {
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       
       {/* Top Banner */}
-      <div className="glass-panel p-6 border-white/10 bg-gradient-to-r from-slate-900/90 via-[#0d1527] to-slate-900/90 relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-blue-500/25">
-              <Server className="w-7 h-7" />
+      <div className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.9), rgba(13,21,39,0.95))' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div className="brand-icon-box" style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)' }}>
+              <Server size={24} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-white font-heading">
-                  100% Serverless AWS Architecture & Zero-Cost Cloud Pipeline
-                </h2>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                  Zero Bill Verified
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '1.25rem', color: 'white' }}>100% Serverless AWS Architecture</h2>
+                <span className="brand-badge" style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#6ee7b7', borderColor: 'rgba(16, 185, 129, 0.4)' }}>
+                  Zero-Cost Verified
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Engineered for Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)
+              <p style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                Built for Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleCopySam}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-mono font-semibold transition-all"
-            >
-              {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedCode ? 'Copied SAM Command!' : 'sam deploy --guided'}</span>
-            </button>
-          </div>
+          <button
+            onClick={handleCopySam}
+            className="btn-icon-refresh"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            {copiedCode ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+            <span>{copiedCode ? 'Copied SAM Command!' : 'sam deploy --guided'}</span>
+          </button>
         </div>
       </div>
 
-      {/* Interactive Node Flowchart Grid */}
-      <div className="glass-panel p-6 border-white/10 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-white font-heading flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
-            <span>Interactive Serverless Flowchart (Click nodes to inspect live payloads & IAM specs)</span>
-          </h3>
-          <span className="text-xs text-slate-400">Click any card to inspect</span>
+      {/* Interactive Serverless Nodes Flowchart */}
+      <div className="glass-card">
+        <div className="card-header">
+          <div className="card-title-group">
+            <Cpu size={20} color="#06b6d4" />
+            <div>
+              <h3 className="card-title">Interactive Serverless Flowchart</h3>
+              <p className="card-subtitle">Click any cloud node to inspect its live data contract, IAM policy, and free tier quota</p>
+            </div>
+          </div>
+          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>8 Microservice Components</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div className="arch-nodes-grid">
           {nodes.map((node, index) => {
             const Icon = node.icon;
             const isSelected = node.id === selectedNode;
@@ -210,40 +206,36 @@ export default function AWSArchitecture() {
               <div
                 key={node.id}
                 onClick={() => setSelectedNode(node.id)}
-                className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-slate-800/90 border-cyan-400 ring-2 ring-cyan-500/30 shadow-lg shadow-cyan-500/10 -translate-y-0.5'
-                    : 'bg-slate-900/60 border-white/10 hover:border-white/20 hover:bg-slate-900/80'
-                }`}
+                className={`arch-node-card ${isSelected ? 'active' : ''}`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] uppercase font-mono font-bold text-slate-400">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#94a3b8' }}>
                       Step {index + 1}
                     </span>
-                    <span className="text-[10px] text-emerald-400 font-mono">
-                      {node.cost.split(' ')[0]} {node.cost.split(' ')[1]}
+                    <span style={{ fontSize: '0.65rem', color: '#34d399', fontFamily: 'var(--font-mono)' }}>
+                      Free Tier
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <div className={`p-2 rounded-lg bg-gradient-to-tr ${node.color} text-white shadow-sm`}>
-                      <Icon className="w-4 h-4" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `${node.color}25`, border: `1px solid ${node.color}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: node.color }}>
+                      <Icon size={16} />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-white font-heading leading-tight">{node.title}</h4>
-                      <p className="text-[10px] text-slate-400 font-mono">{node.category}</p>
+                      <h4 style={{ fontSize: '0.85rem', color: 'white', lineHeight: 1.2 }}>{node.title}</h4>
+                      <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>{node.category}</span>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed">
+                  <p style={{ fontSize: '0.75rem', color: '#cbd5e1', lineHeight: 1.4 }}>
                     {node.description}
                   </p>
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-cyan-400 font-mono">
+                <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#06b6d4', fontFamily: 'var(--font-mono)' }}>
                   <span>Inspect Spec</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <span>→</span>
                 </div>
               </div>
             );
@@ -252,66 +244,62 @@ export default function AWSArchitecture() {
       </div>
 
       {/* Deep Dive Node Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="arch-inspect-grid">
         
-        {/* Left: Spec Details (5 cols) */}
-        <div className="lg:col-span-5 glass-panel p-6 border-white/10 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-xl bg-gradient-to-tr ${activeNode.color} text-white shadow-md`}>
-              <activeNode.icon className="w-6 h-6" />
+        {/* Left: Spec Details */}
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: `${activeNode.color}25`, border: `1px solid ${activeNode.color}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: activeNode.color }}>
+              <activeNode.icon size={22} />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-white/10">
+              <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', padding: '2px 6px', background: 'rgba(30,41,59,0.8)', borderRadius: '4px', color: '#cbd5e1' }}>
                 {activeNode.category}
               </span>
-              <h3 className="text-lg font-bold text-white font-heading mt-1">{activeNode.title}</h3>
+              <h3 style={{ fontSize: '1.1rem', color: 'white', marginTop: '4px' }}>{activeNode.title}</h3>
             </div>
           </div>
 
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.5 }}>
             {activeNode.description}
           </p>
 
-          <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
-            <div className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4 text-emerald-400" />
-              <span>AWS Free Tier Allocation</span>
+          <div style={{ background: 'var(--bg-card-inner)', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '4px' }}>
+              <DollarSign size={14} color="#10b981" />
+              <span>Free Tier Quota</span>
             </div>
-            <div className="text-xs font-mono text-emerald-300 font-bold">
+            <strong style={{ fontSize: '0.85rem', color: '#6ee7b7', fontFamily: 'var(--font-mono)' }}>
               {activeNode.cost}
-            </div>
+            </strong>
           </div>
 
-          <div className="text-[11px] text-slate-400 leading-relaxed border-t border-white/10 pt-3">
-            <strong>SAM Resource Mapping: </strong>
-            Declared in <span className="font-mono text-cyan-300">template.yaml</span> under Infrastructure-as-Code definitions.
+          <div style={{ fontSize: '0.72rem', color: '#64748b', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)' }}>
+            Declared in <span style={{ fontFamily: 'var(--font-mono)', color: '#06b6d4' }}>template.yaml</span> under AWS SAM Infrastructure-as-Code definitions.
           </div>
         </div>
 
-        {/* Right: Live Payload & Data Contract (7 cols) */}
-        <div className="lg:col-span-7 glass-panel p-6 border-white/10 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-cyan-400" />
-                <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
-                  Data Contract & Payload Inspector
-                </h4>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-white/5">
-                application/json
-              </span>
+        {/* Right: Live Payload Inspector */}
+        <div className="glass-card">
+          <div className="card-header" style={{ marginBottom: '12px' }}>
+            <div className="card-title-group">
+              <Code2 size={18} color="#06b6d4" />
+              <h4 style={{ fontSize: '0.85rem', color: 'white', fontFamily: 'var(--font-mono)' }}>
+                Live Data Contract & JSON Payload
+              </h4>
             </div>
-
-            {/* Code Box */}
-            <div className="bg-[#080d1a] border border-white/10 rounded-xl p-4 font-mono text-xs text-cyan-300 overflow-x-auto max-h-72">
-              <pre>{JSON.stringify(activeNode.payload, null, 2)}</pre>
-            </div>
+            <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: '#64748b' }}>
+              application/json
+            </span>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
-            <span>Verified compatibility with AWS Lambda Python 3.12 & boto3 runtime</span>
-            <span className="font-mono text-emerald-400 font-semibold">$0.00 / month</span>
+          <div className="code-pre-box">
+            <pre>{JSON.stringify(activeNode.payload, null, 2)}</pre>
+          </div>
+
+          <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
+            <span>Verified compatibility with Python 3.12 & boto3</span>
+            <span style={{ fontFamily: 'var(--font-mono)', color: '#10b981', fontWeight: 700 }}>$0.00 / month</span>
           </div>
         </div>
 

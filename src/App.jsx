@@ -13,7 +13,7 @@ import BedrockAIAssistant from './components/BedrockAIAssistant';
 import { DELHI_NCR_SCHOOLS } from './services/schoolsData';
 import { fetchLiveSchoolAirQuality, getSimulatedAirQuality } from './services/aqiService';
 import { getGRAPStage } from './services/grapRules';
-import { Shield, Sparkles, Send, Server, AlertTriangle, CheckCircle, ExternalLink, Heart } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 export default function App() {
   const [selectedSchool, setSelectedSchool] = useState(DELHI_NCR_SCHOOLS[0]);
@@ -21,13 +21,12 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isSimulated, setIsSimulated] = useState(false);
   const [scenarioName, setScenarioName] = useState('Live Open-Meteo Feed');
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'directory', 'architecture'
+  const [activeTab, setActiveTab] = useState('dashboard');
   
   // Modals
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
   const [isBedrockOpen, setIsBedrockOpen] = useState(false);
 
-  // Load air quality data on school change
   useEffect(() => {
     loadData(selectedSchool);
   }, [selectedSchool]);
@@ -65,9 +64,9 @@ export default function App() {
   const grapData = getGRAPStage(currentAqi);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070a13] text-slate-100 selection:bg-cyan-500 selection:text-black">
+    <div className="app-container">
       
-      {/* Top Navigation */}
+      {/* Top Navbar */}
       <Header
         selectedSchool={selectedSchool}
         onSelectSchool={setSelectedSchool}
@@ -78,21 +77,19 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenBroadcast={() => setIsBroadcastOpen(true)}
-        onOpenBedrock={() => setIsBedrockOpen(true)}
         grapStage={grapData.stage}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+      {/* Main Container */}
+      <main className="main-content">
         
         {/* TAB 1: Main Dashboard */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            
+          <>
             {/* Real-Time Telemetry & Radial AQI Gauge */}
             <AQIGauge data={airData} school={selectedSchool} />
 
-            {/* GRAP Statutory Compliance & Principal Action Center */}
+            {/* GRAP Compliance & Action Checklist */}
             <GRAPActionCenter
               aqi={currentAqi}
               school={selectedSchool}
@@ -100,7 +97,7 @@ export default function App() {
               onOpenBedrock={() => setIsBedrockOpen(true)}
             />
 
-            {/* Scenario / Time-Travel Simulator */}
+            {/* Scenario Evaluation Simulator */}
             <ScenarioSimulator
               currentAqi={currentAqi}
               isSimulated={isSimulated}
@@ -108,56 +105,50 @@ export default function App() {
               onResetLive={handleResetLive}
             />
 
-            {/* 24-Hour Hourly Trend & Morning Rush Analysis */}
+            {/* 24-Hour Diurnal Forecast & Rush Hour Peaks */}
             <HourlyForecast hourlyForecast={airData?.hourlyForecast || []} />
 
-            {/* Pediatric Health Risk & Staff Vulnerability Matrix */}
+            {/* Pediatric Health & Risk Matrix */}
             <HealthVulnerability aqi={currentAqi} />
-
-          </div>
+          </>
         )}
 
         {/* TAB 2: Monitored Schools Directory */}
         {activeTab === 'directory' && (
-          <div className="animate-in fade-in duration-300">
-            <SchoolDirectory
-              selectedSchool={selectedSchool}
-              onSelectSchool={(s) => {
-                setSelectedSchool(s);
-                setActiveTab('dashboard');
-              }}
-              currentAqi={currentAqi}
-            />
-          </div>
+          <SchoolDirectory
+            selectedSchool={selectedSchool}
+            onSelectSchool={(s) => {
+              setSelectedSchool(s);
+              setActiveTab('dashboard');
+            }}
+          />
         )}
 
         {/* TAB 3: AWS Architecture Explorer */}
         {activeTab === 'architecture' && (
-          <div className="animate-in fade-in duration-300">
-            <AWSArchitecture />
-          </div>
+          <AWSArchitecture />
         )}
 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-[#070a13]/90 py-6 px-4 lg:px-8 text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-cyan-400" />
-            <span className="font-bold text-slate-200">VayuRakshak Platform</span>
-            <span>• Built for Bharat Builds Tour (WeMakeDevs & AWS) — Environmental Hacks</span>
+      <footer className="app-footer">
+        <div className="footer-inner">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Shield size={16} color="#06b6d4" />
+            <strong style={{ color: '#e2e8f0' }}>VayuRakshak Platform</strong>
+            <span>• Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)</span>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>Free Tier AWS Lambda + DynamoDB + Bedrock</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span>AWS Serverless (Lambda • DynamoDB • Bedrock)</span>
             <span>•</span>
             <span>CPCB NAQI Standards</span>
           </div>
         </div>
       </footer>
 
-      {/* Bilingual Parent Broadcast Modal */}
+      {/* Parent Broadcast Modal */}
       {isBroadcastOpen && (
         <BroadcastGenerator
           aqi={currentAqi}

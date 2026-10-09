@@ -3,25 +3,20 @@ import {
   Send, 
   Copy, 
   Check, 
-  MessageSquare, 
   Share2, 
-  Download, 
-  Globe, 
   X, 
-  Sparkles,
-  Smartphone
+  Smartphone 
 } from 'lucide-react';
 import { getGRAPStage } from '../services/grapRules';
 
 export default function BroadcastGenerator({ aqi, school, onClose }) {
   const grap = getGRAPStage(aqi);
-  const [activeLang, setActiveLang] = useState('both'); // 'en', 'hi', 'both'
+  const [activeLang, setActiveLang] = useState('both');
   const [recipientGroup, setRecipientGroup] = useState('All Grades (Pre-School to 12)');
   const [copiedType, setCopiedType] = useState(null);
   const [customPrincipal, setCustomPrincipal] = useState(school.principal || 'Principal Office');
   const [effectiveDate, setEffectiveDate] = useState(new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }));
 
-  // Generate English circular text
   const generateEnglish = () => {
     let modeText = '';
     let rulesText = '';
@@ -46,7 +41,6 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
     return `🛡️ *${school.name.toUpperCase()}*\n*OFFICIAL PARENT ADVISORY*\n*Date:* ${effectiveDate} | *Current AQI:* ${aqi} (${grap.shortCode})\n*Target:* ${recipientGroup}\n\n${modeText}\n\nDear Parents & Guardians,\nIn strict compliance with statutory guidelines issued by the Commission for Air Quality Management (CAQM) and the Directorate of Education, please note the following operational directives:\n\n${rulesText}\n\nPlease ensure your ward is equipped with necessary respiratory protection. For medical assistance, the school infirmary is fully staffed.\n\nWarm regards,\n*${customPrincipal}*\n${school.name}`;
   };
 
-  // Generate Hindi circular text
   const generateHindi = () => {
     let modeTextHi = '';
     let rulesTextHi = '';
@@ -88,41 +82,37 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0b101e] border border-white/15 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
         
-        {/* Header */}
-        <div className="p-5 border-b border-white/10 bg-slate-900/90 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white shadow-md">
-              <Send className="w-5 h-5" />
+        {/* Modal Header */}
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="brand-icon-box" style={{ width: '38px', height: '38px', background: 'linear-gradient(135deg, #059669, #0d9488)' }}>
+              <Send size={18} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white font-heading">
-                Bilingual Parent Broadcast & WhatsApp Dispatcher
-              </h2>
-              <p className="text-xs text-slate-400">
-                Instant statutory circulars customized for {school.shortName} (GRAP {grap.shortCode})
+              <h2 style={{ fontSize: '1.15rem', color: 'white' }}>Bilingual Parent Broadcast Dispatcher</h2>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Instant statutory circulars for {school.shortName} (GRAP {grap.shortCode})
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all"
-          >
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="btn-icon-refresh" style={{ padding: '6px 8px' }}>
+            <X size={18} />
           </button>
         </div>
 
         {/* Configuration Bar */}
-        <div className="p-4 bg-slate-950/60 border-b border-white/10 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div style={{ padding: '14px 24px', background: 'rgba(10, 16, 30, 0.9)', borderBottom: '1px solid var(--border-subtle)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', fontSize: '0.78rem' }}>
           <div>
-            <label className="block text-slate-400 font-mono mb-1">Target Student Group:</label>
+            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Target Group:</label>
             <select
               value={recipientGroup}
               onChange={(e) => setRecipientGroup(e.target.value)}
-              className="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="custom-select"
+              style={{ padding: '8px 12px', fontSize: '0.78rem' }}
             >
               <option value="All Grades (Pre-School to 12)">All Grades (Pre-School to 12)</option>
               <option value="Primary Wing Only (Nursery - Class 5)">Primary Wing Only (Nursery - Class 5)</option>
@@ -132,39 +122,37 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
           </div>
 
           <div>
-            <label className="block text-slate-400 font-mono mb-1">Principal / Authority Sign:</label>
+            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Principal Signature:</label>
             <input
               type="text"
               value={customPrincipal}
               onChange={(e) => setCustomPrincipal(e.target.value)}
-              className="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="custom-select"
+              style={{ padding: '8px 12px', fontSize: '0.78rem' }}
             />
           </div>
 
           <div>
-            <label className="block text-slate-400 font-mono mb-1">Language View:</label>
-            <div className="flex bg-slate-900 rounded-lg p-0.5 border border-white/10">
+            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Language:</label>
+            <div className="nav-pill-group" style={{ padding: '2px' }}>
               <button
                 onClick={() => setActiveLang('both')}
-                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  activeLang === 'both' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`nav-pill-btn ${activeLang === 'both' ? 'active' : ''}`}
+                style={{ flex: 1, padding: '5px 8px', justifyContent: 'center' }}
               >
-                Bilingual (EN+HI)
+                Bilingual
               </button>
               <button
                 onClick={() => setActiveLang('en')}
-                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  activeLang === 'en' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`nav-pill-btn ${activeLang === 'en' ? 'active' : ''}`}
+                style={{ flex: 1, padding: '5px 8px', justifyContent: 'center' }}
               >
                 English
               </button>
               <button
                 onClick={() => setActiveLang('hi')}
-                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  activeLang === 'hi' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`nav-pill-btn ${activeLang === 'hi' ? 'active' : ''}`}
+                style={{ flex: 1, padding: '5px 8px', justifyContent: 'center' }}
               >
                 हिन्दी
               </button>
@@ -172,74 +160,67 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
           </div>
         </div>
 
-        {/* Live Preview WhatsApp Bubble */}
-        <div className="p-5 flex-1 overflow-y-auto bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-[#070b14]">
-          <div className="max-w-2xl mx-auto">
-            
-            {/* WhatsApp Chat Preview Card */}
-            <div className="bg-[#1f2c34] text-[#e9edef] rounded-2xl rounded-tl-none p-4.5 shadow-xl border border-white/10 relative font-sans text-xs leading-relaxed space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[11px] text-[#8696a0]">
-                <div className="flex items-center gap-1.5">
-                  <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>WhatsApp Broadcast Preview</span>
+        {/* Modal Body: WhatsApp Chat Simulation */}
+        <div className="modal-body" style={{ background: '#080c16' }}>
+          <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+            <div className="whatsapp-chat-bubble">
+              <div className="whatsapp-meta-top">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Smartphone size={14} color="#34d399" />
+                  <span>Official WhatsApp Broadcast Preview</span>
                 </div>
                 <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
 
               {activeLang === 'en' && (
-                <div className="whitespace-pre-line font-mono text-xs">{englishText}</div>
+                <div style={{ whiteSpace: 'pre-line', fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>{englishText}</div>
               )}
               {activeLang === 'hi' && (
-                <div className="whitespace-pre-line text-xs font-normal">{hindiText}</div>
+                <div style={{ whiteSpace: 'pre-line', fontSize: '0.8rem' }}>{hindiText}</div>
               )}
               {activeLang === 'both' && (
-                <div className="space-y-4">
-                  <div className="whitespace-pre-line font-mono text-xs">{englishText}</div>
-                  <div className="border-t border-white/10 pt-3 whitespace-pre-line text-xs">{hindiText}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ whiteSpace: 'pre-line', fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>{englishText}</div>
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px', whiteSpace: 'pre-line', fontSize: '0.8rem' }}>{hindiText}</div>
                 </div>
               )}
             </div>
-
           </div>
         </div>
 
-        {/* Bottom Actions */}
-        <div className="p-4 bg-slate-900 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Modal Footer Actions */}
+        <div className="modal-footer">
+          <div style={{ display: 'flex', gap: '8px' }}>
             <button
               onClick={() => copyToClipboard(englishText, 'en')}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
+              className="btn-icon-refresh"
             >
-              {copiedType === 'en' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedType === 'en' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
               <span>{copiedType === 'en' ? 'Copied EN!' : 'Copy English'}</span>
             </button>
-
             <button
               onClick={() => copyToClipboard(hindiText, 'hi')}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
+              className="btn-icon-refresh"
             >
-              {copiedType === 'hi' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedType === 'hi' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
               <span>{copiedType === 'hi' ? 'Copied HI!' : 'Copy Hindi'}</span>
             </button>
-
             <button
               onClick={() => copyToClipboard(combinedText, 'both')}
-              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-semibold transition-all"
+              className="btn-icon-refresh"
             >
-              {copiedType === 'both' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedType === 'both' ? 'Copied All!' : 'Copy Bilingual'}</span>
+              {copiedType === 'both' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+              <span>{copiedType === 'both' ? 'Copied All!' : 'Copy All'}</span>
             </button>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button
-              onClick={openWhatsApp}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/30 ring-1 ring-white/20 transition-all transform active:scale-95"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Broadcast on WhatsApp</span>
-            </button>
-          </div>
+          <button
+            onClick={openWhatsApp}
+            className="btn-broadcast-cta"
+          >
+            <Share2 size={16} />
+            <span>Open WhatsApp Web</span>
+          </button>
         </div>
 
       </div>

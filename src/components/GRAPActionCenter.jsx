@@ -3,16 +3,11 @@ import {
   ShieldAlert, 
   CheckCircle2, 
   Circle, 
-  AlertTriangle, 
-  FileText, 
-  Bus, 
-  Activity, 
-  Flame, 
-  Wind, 
-  Award, 
+  Sparkles, 
   CheckSquare, 
-  Square,
-  Sparkles
+  Bus, 
+  Wind, 
+  Award 
 } from 'lucide-react';
 import { getGRAPStage } from '../services/grapRules';
 
@@ -21,7 +16,6 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
   const [completedTasks, setCompletedTasks] = useState({});
   const [filterCategory, setFilterCategory] = useState('All');
 
-  // Toggle checklist item
   const toggleTask = (taskId) => {
     setCompletedTasks(prev => ({
       ...prev,
@@ -49,211 +43,175 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
     : tasks.filter(t => t.category === filterCategory);
 
   return (
-    <div className="glass-panel p-6 border-white/10 space-y-6 relative overflow-hidden">
+    <div className="glass-card">
       
-      {/* Top GRAP Status Banner */}
-      <div 
-        className={`p-5 rounded-2xl border transition-all ${
-          grapData.stage >= 3 
-            ? 'bg-gradient-to-r from-red-950/80 via-red-900/40 to-slate-900/90 border-red-500/40 shadow-lg shadow-red-900/20'
-            : grapData.stage >= 1
-            ? 'bg-gradient-to-r from-amber-950/70 via-orange-950/40 to-slate-900/90 border-orange-500/40'
-            : 'bg-gradient-to-r from-emerald-950/60 via-slate-900/80 to-slate-900/90 border-emerald-500/40'
-        }`}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* GRAP Status Hero Banner */}
+      <div className={`grap-status-hero stage-${grapData.stage}`}>
+        <div className="grap-hero-top">
           
-          {/* Left: Stage info */}
-          <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-xl ${
-              grapData.stage >= 3 ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/30' :
-              grapData.stage >= 1 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/30' :
-              'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30'
-            }`}>
-              <ShieldAlert className="w-8 h-8 animate-pulse" />
+          <div className="grap-stage-title-box">
+            <div className="grap-stage-icon-box">
+              <ShieldAlert size={28} color={grapData.color} />
             </div>
 
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/40 border border-white/15 text-slate-200">
-                  {grapData.badge}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {grapData.threshold}
-                </span>
+              <div className="grap-badge-row">
+                <span className="grap-badge">{grapData.badge}</span>
+                <span className="grap-threshold">{grapData.threshold}</span>
               </div>
-
-              <h2 className="text-xl md:text-2xl font-black font-heading text-white mt-1">
-                {grapData.name}
-              </h2>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Statutory Order: <span className="font-semibold text-cyan-300">{grapData.statutoryOrder}</span>
+              <h2 className="grap-stage-name">{grapData.name}</h2>
+              <p className="grap-authority-text">
+                Statutory Order: <span>{grapData.statutoryOrder}</span>
               </p>
             </div>
           </div>
 
-          {/* Right: School Operational Mode Callout */}
-          <div className="bg-black/40 border border-white/10 p-3.5 rounded-xl md:min-w-64 flex flex-col justify-between">
-            <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
-              Prescribed Operational Mode
+          <div className="grap-school-mode-box">
+            <div className="grap-mode-label">Operational Mode Mandate</div>
+            <div className="grap-mode-val">
+              <span className="ping-dot" />
+              <span>{grapData.schoolMode}</span>
             </div>
-            <div className="text-sm font-bold text-white mt-1 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              {grapData.schoolMode}
-            </div>
-            <div className="mt-2 text-[11px] text-slate-400">
-              Campus: <span className="text-slate-200 font-medium">{school.shortName}</span>
-            </div>
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+              Campus: <strong style={{ color: '#e2e8f0' }}>{school.shortName}</strong>
+            </span>
           </div>
 
         </div>
 
-        {/* Detailed overview */}
-        <div className="mt-4 pt-3 border-t border-white/10 text-xs text-slate-300 leading-relaxed">
-          <strong>CAQM Legal Directives: </strong> {grapData.overview}
+        <div style={{ fontSize: '0.8rem', color: '#cbd5e1', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <strong style={{ color: 'white' }}>CAQM Directives: </strong>
+          <span>{grapData.overview}</span>
         </div>
       </div>
 
-      {/* Checklist Header & Progress Bar */}
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2.5">
-            <CheckSquare className="w-5 h-5 text-cyan-400" />
-            <div>
-              <h3 className="text-base font-bold text-white font-heading">
-                School Principal Statutory Compliance Checklist
-              </h3>
-              <p className="text-xs text-slate-400">
-                Mandatory legal action items required by Directorate of Education & CAQM
-              </p>
-            </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onOpenBedrock}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/30 text-xs font-semibold transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-              <span>AI Action Copilot</span>
-            </button>
-            <button
-              onClick={markAllComplete}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/30 text-xs font-semibold transition-all"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Mark All Done</span>
-            </button>
+      {/* Compliance Header & Action Controls */}
+      <div className="card-header">
+        <div className="card-title-group">
+          <CheckSquare size={20} color="#06b6d4" />
+          <div>
+            <h3 className="card-title">School Principal Statutory Compliance Checklist</h3>
+            <p className="card-subtitle">Mandatory directives legally required under CAQM & Directorate of Education</p>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="bg-slate-900/80 p-3.5 rounded-xl border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400">Compliance Progress:</span>
-              <span className="font-bold text-white">{completedCount} of {totalCount} Directives Active</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className={`font-bold ${isAllCompleted ? 'text-emerald-400' : 'text-cyan-400'}`}>
-                {progressPercent}%
-              </span>
-              {isAllCompleted && (
-                <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/40">
-                  <Award className="w-3 h-3" /> 100% COMPLIANT
-                </span>
-              )}
-            </div>
-          </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={onOpenBedrock}
+            className="btn-icon-refresh"
+            style={{ color: '#c084fc', borderColor: 'rgba(192, 132, 252, 0.3)' }}
+          >
+            <Sparkles size={14} />
+            <span>AI Copilot</span>
+          </button>
+          <button
+            onClick={markAllComplete}
+            className="btn-icon-refresh"
+            style={{ color: '#34d399', borderColor: 'rgba(52, 211, 153, 0.3)' }}
+          >
+            <CheckCircle2 size={14} />
+            <span>Mark All Complied</span>
+          </button>
+        </div>
+      </div>
 
-          <div className="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isAllCompleted 
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400' 
-                  : 'bg-gradient-to-r from-blue-500 to-cyan-400'
-              }`}
-              style={{ width: `${progressPercent}%` }}
-            />
+      {/* Compliance Progress Bar */}
+      <div className="compliance-progress-box">
+        <div className="progress-header-row">
+          <span style={{ color: '#94a3b8' }}>
+            Action Items: <strong style={{ color: 'white' }}>{completedCount} of {totalCount} Complied</strong>
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontWeight: 800, color: isAllCompleted ? '#34d399' : '#38bdf8' }}>
+              {progressPercent}%
+            </span>
+            {isAllCompleted && (
+              <span style={{ 
+                fontSize: '0.7rem', 
+                fontWeight: 700, 
+                color: '#34d399', 
+                background: 'rgba(16, 185, 129, 0.15)', 
+                padding: '2px 8px', 
+                borderRadius: '4px',
+                border: '1px solid rgba(16, 185, 129, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <Award size={12} /> 100% COMPLIANT
+              </span>
+            )}
           </div>
+        </div>
+
+        <div className="progress-bar-track">
+          <div 
+            className={`progress-bar-fill ${isAllCompleted ? 'complete' : ''}`}
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </div>
 
       {/* Category Pills Filter */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="category-filter-bar">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setFilterCategory(cat)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-all shrink-0 ${
-              filterCategory === cat
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold'
-                : 'bg-slate-900/60 text-slate-400 border border-white/5 hover:text-slate-200'
-            }`}
+            className={`filter-pill ${filterCategory === cat ? 'active' : ''}`}
           >
             {cat}
           </button>
         ))}
       </div>
 
-      {/* Interactive Task Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {/* Checklist Tasks Grid */}
+      <div className="checklist-grid">
         {filteredTasks.map((task) => {
           const isDone = !!completedTasks[task.id];
           return (
             <div
               key={task.id}
               onClick={() => toggleTask(task.id)}
-              className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-start gap-3 select-none ${
-                isDone
-                  ? 'bg-emerald-950/20 border-emerald-500/40 text-slate-300'
-                  : 'bg-slate-900/70 border-white/10 hover:border-white/20 hover:bg-slate-900/90 text-slate-200'
-              }`}
+              className={`task-item-card ${isDone ? 'completed' : ''}`}
             >
-              <div className="mt-0.5 shrink-0">
+              <div className="task-check-icon">
                 {isDone ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                  <CheckCircle2 size={18} color="#10b981" />
                 ) : (
-                  <Circle className="w-5 h-5 text-slate-500 hover:text-slate-300" />
+                  <Circle size={18} color="#64748b" />
                 )}
               </div>
 
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-white/5">
-                    {task.category}
-                  </span>
+              <div className="task-content-box">
+                <div className="task-meta-row">
+                  <span className="task-tag">{task.category}</span>
                   {task.mandatory && (
-                    <span className="text-[9px] uppercase font-mono font-semibold text-red-400 bg-red-950/60 px-1.5 py-0.5 rounded border border-red-500/20">
-                      Mandatory
-                    </span>
+                    <span className="task-mandatory-badge">Mandatory</span>
                   )}
                 </div>
-                <p className={`text-xs leading-relaxed ${isDone ? 'line-through text-slate-400' : 'text-slate-100 font-medium'}`}>
-                  {task.text}
-                </p>
+                <p className="task-text">{task.text}</p>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Transport & Mask Directives Sub-Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        <div className="p-3.5 rounded-xl bg-slate-900/60 border border-white/10 flex items-start gap-3">
-          <Bus className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-          <div className="text-xs">
-            <span className="font-bold text-slate-200">Transport & Bus Fleet Rule: </span>
-            <span className="text-slate-400">{grapData.transportRule}</span>
+      {/* Transport & Mask Directives Row */}
+      <div className="directives-two-col">
+        <div className="directive-card">
+          <Bus size={18} color="#06b6d4" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <strong>Transport Fleet Rule: </strong>
+            <span style={{ color: '#94a3b8' }}>{grapData.transportRule}</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-900/60 border border-white/10 flex items-start gap-3">
-          <Wind className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-          <div className="text-xs">
-            <span className="font-bold text-slate-200">Respiratory Protection Guideline: </span>
-            <span className="text-slate-400">{grapData.maskRecommendation}</span>
+        <div className="directive-card">
+          <Wind size={18} color="#06b6d4" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <strong>Mask Protection Protocol: </strong>
+            <span style={{ color: '#94a3b8' }}>{grapData.maskRecommendation}</span>
           </div>
         </div>
       </div>
