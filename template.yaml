@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  VayuRakshak - Serverless Real-Time AQI Telemetry, GRAP Compliance & Bedrock Advisory Generator
+  Built for Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: python3.12
+    Tracing: Active
+    Environment:
+      Variables:
+        DYNAMODB_TABLE: !Ref SchoolAQITable
+        SNS_TOPIC_ARN: !Ref EmergencyAlertTopic
+        BEDROCK_MODEL_ID: 'anthropic.claude-3-haiku-20240307-v1:0'
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # 1. DynamoDB: Time-Series Telemetry Table
+  # ---------------------------------------------------------------------------
+  SchoolAQITable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SchoolAQITelemetry
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Project
+          Value: VayuRakshak
+        - Key: Environment
+          Value: Production
+
+  # ---------------------------------------------------------------------------
+  # 2. SNS: Emergency GRAP Notification Topic
+  # ---------------------------------------------------------------------------
+  EmergencyAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: VayuRakshak-GRAP-Emergency-Alerts
+      DisplayName: VayuRakshak GRAP Action Broadcast
+
+  # ---------------------------------------------------------------------------
+  # 3. Lambda: Scheduled Air Quality Ingestion Pipeline
+  # ---------------------------------------------------------------------------
+  AQIIngestionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: VayuRakshak-AQI-Ingest
+      CodeUri: backend/
+      Handler: lambda_ingest.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SchoolAQITable
+      Events:
+        FifteenMinuteSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(15 minutes)
+            Name: VayuRakshakTelemetryCron
+            Description: Triggers CPCB / Open-Meteo ingestion every 15 minutes
+            Enabled: true
+
+  # ---------------------------------------------------------------------------
+  # 4. Lambda: GRAP Compliance & Bedrock AI Advisory Generator
+  # ---------------------------------------------------------------------------
+  AdvisoryGeneratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: VayuRakshak-Advisory-Bedrock
+      CodeUri: backend/
+      Handler: lambda_advisory.lambda_handler
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt EmergencyAlertTopic.TopicName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: '*'
+      Events:
+        AdvisoryApi:
+          Type: Api
+          Properties:
+            Path: /generate-advisory
+            Method: post
+
+Outputs:
+  SchoolAQITableName:
+    Description: DynamoDB Table Name
+    Value: !Ref SchoolAQITable
+  IngestionFunctionArn:
+    Description: ARN of Telemetry Ingestion Lambda
+    Value: !GetAtt AQIIngestionFunction.Arn
+  AdvisoryFunctionArn:
+    Description: ARN of AI Advisory Lambda
+    Value: !GetAtt AdvisoryGeneratorFunction.Arn
+  EmergencyAlertTopicArn:
+    Description: ARN of SNS Alert Topic
+    Value: !Ref EmergencyAlertTopic
+  ApiEndpoint:
+    Description: API Gateway Endpoint for Advisory Generator
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/generate-advisory"
