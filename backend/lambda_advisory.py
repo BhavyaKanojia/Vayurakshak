@@ -65,7 +65,7 @@ Format output as clean JSON with keys: "executive_summary", "english_broadcast",
         except Exception:
             return {"raw_advisory": raw_text}
             
-    except ClientError as e:
+    except Exception as e:
         print(f"Bedrock invocation fallback: {e}")
         # Deterministic zero-latency fallback template
         return get_fallback_advisory(school_name, aqi, grap_stage)

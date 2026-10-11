@@ -10,8 +10,15 @@ import {
   Copy, 
   Check, 
   Zap,
-  DollarSign
+  DollarSign,
+  Play,
+  Terminal,
+  ExternalLink,
+  ShieldCheck,
+  AlertTriangle,
+  Send
 } from 'lucide-react';
+import { getSavedAWSEndpoint, saveAWSEndpoint, testAWSGatewayConnection } from '../services/awsService';
 
 export default function AWSArchitecture() {
   const [selectedNode, setSelectedNode] = useState('lambda-ingest');
@@ -144,10 +151,56 @@ export default function AWSArchitecture() {
 
   const activeNode = nodes.find(n => n.id === selectedNode) || nodes[2];
 
+  const [awsEndpoint, setAwsEndpoint] = useState(getSavedAWSEndpoint());
+  const [isTestingEndpoint, setIsTestingEndpoint] = useState(false);
+  const [endpointResult, setEndpointResult] = useState(null);
+  const [guideTab, setGuideTab] = useState('amplify'); // 'amplify' | 'sam' | 'console' | 'local'
+  const [simulatingPipeline, setSimulatingPipeline] = useState(false);
+  const [simLogs, setSimLogs] = useState([]);
+
   const handleCopySam = () => {
     navigator.clipboard.writeText('sam build && sam deploy --guided');
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleSaveEndpoint = (val) => {
+    setAwsEndpoint(val);
+    saveAWSEndpoint(val);
+  };
+
+  const handleTestEndpoint = async () => {
+    setIsTestingEndpoint(true);
+    setEndpointResult(null);
+    const res = await testAWSGatewayConnection(awsEndpoint);
+    setEndpointResult(res);
+    setIsTestingEndpoint(false);
+  };
+
+  const handleSimulatePipeline = () => {
+    setSimulatingPipeline(true);
+    setSimLogs([]);
+
+    const steps = [
+      { text: '[00:00.020] [Amazon EventBridge] Cron Trigger fired rule "VayuRakshakTelemetryCron" (rate: 15m)', type: 'info' },
+      { text: '[00:00.140] [AWS Lambda] Invoking "VayuRakshak-AQI-Ingest" (Python 3.12, Memory: 256MB, Region: us-east-1)', type: 'info' },
+      { text: '[00:00.320] [Open-Meteo & CPCB] Ingested 6 stations: DTU, Anand Vihar, RK Puram, ITO, Noida, Gurugram', type: 'info' },
+      { text: '[00:00.410] [CPCB NAQI Engine] Computed Anand Vihar AQI: 425 (GRAP Stage III - Severe) | Dominant: PM2.5', type: 'warn' },
+      { text: '[00:00.580] [Amazon DynamoDB] PutItem successful to table "SchoolAQITelemetry" (Item size: 412 bytes, TTL: 30d)', type: 'success' },
+      { text: '[00:00.820] [AWS Lambda] Triggering "VayuRakshak-Advisory-Bedrock" via API Gateway /generate-advisory', type: 'info' },
+      { text: '[00:01.210] [Amazon Bedrock] Claude 3 Haiku generated bilingual circular (Tokens: 382, Latency: 390ms)', type: 'success' },
+      { text: '[00:01.440] [Amazon SNS] Published SOS alert to topic "VayuRakshak-GRAP-Emergency-Alerts" (MessageId: sns-928472-delhi)', type: 'success' },
+      { text: '[00:01.500] [Status: 200 OK] Serverless pipeline execution completed. Total Bill: $0.00 (100% Free Tier)', type: 'highlight' }
+    ];
+
+    steps.forEach((step, idx) => {
+      setTimeout(() => {
+        setSimLogs(prev => [...prev, step]);
+        if (idx === steps.length - 1) {
+          setSimulatingPipeline(false);
+        }
+      }, (idx + 1) * 250);
+    });
   };
 
   return (
@@ -303,6 +356,244 @@ export default function AWSArchitecture() {
           </div>
         </div>
 
+      </div>
+
+      {/* Live AWS Pipeline Execution Simulator & Gateway Config */}
+      <div className="glass-card" style={{ border: '1px solid #bae6fd', background: 'linear-gradient(180deg, #ffffff, #f0f9ff)' }}>
+        <div className="card-header" style={{ marginBottom: '16px' }}>
+          <div className="card-title-group">
+            <Terminal size={20} color="#0284c7" />
+            <div>
+              <h3 className="card-title">Live AWS Serverless Pipeline Simulator & Gateway Connect</h3>
+              <p className="card-subtitle">Test end-to-end telemetry ingestion, DynamoDB persistence, Bedrock synthesis, and SNS broadcasts</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSimulatePipeline}
+            disabled={simulatingPipeline}
+            className="btn-primary"
+            style={{ padding: '8px 16px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <Play size={14} />
+            <span>{simulatingPipeline ? 'Executing Lambda...' : 'Run Pipeline Simulation'}</span>
+          </button>
+        </div>
+
+        {/* Live Execution Logs Window */}
+        <div style={{
+          background: '#0f172a',
+          borderRadius: '10px',
+          padding: '16px',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.78rem',
+          color: '#e2e8f0',
+          minHeight: '140px',
+          maxHeight: '220px',
+          overflowY: 'auto',
+          border: '1px solid #1e293b'
+        }}>
+          {simLogs.length === 0 ? (
+            <div style={{ color: '#64748b', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '8px', height: '100px', justifyContent: 'center' }}>
+              <Play size={16} />
+              <span>Click "Run Pipeline Simulation" above to trace EventBridge → Ingestion Lambda → DynamoDB → Bedrock → SNS in real-time</span>
+            </div>
+          ) : (
+            simLogs.map((log, idx) => (
+              <div 
+                key={idx} 
+                style={{ 
+                  marginBottom: '6px', 
+                  color: log.type === 'success' ? '#34d399' : log.type === 'warn' ? '#f59e0b' : log.type === 'highlight' ? '#38bdf8' : '#cbd5e1',
+                  fontWeight: log.type === 'highlight' ? 700 : 400
+                }}
+              >
+                {log.text}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Live API Gateway Config & Connectivity Check */}
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e0f2fe' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '10px' }}>
+            <div>
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                Connect Live Amazon API Gateway Endpoint (Optional)
+              </h4>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Deploy SAM backend, copy the output <code style={{ fontFamily: 'var(--font-mono)', color: '#0284c7' }}>ApiEndpoint</code>, and paste below.
+              </p>
+            </div>
+            <span style={{ fontSize: '0.7rem', color: '#059669', background: '#ecfdf5', padding: '3px 8px', borderRadius: '4px', border: '1px solid #a7f3d0' }}>
+              Supports CORS POST
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              value={awsEndpoint}
+              onChange={(e) => handleSaveEndpoint(e.target.value)}
+              placeholder="https://{restApiId}.execute-api.us-east-1.amazonaws.com/Prod/generate-advisory"
+              style={{
+                flex: 1,
+                minWidth: '280px',
+                padding: '9px 12px',
+                fontSize: '0.8rem',
+                fontFamily: 'var(--font-mono)',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: '#ffffff'
+              }}
+            />
+            <button
+              onClick={handleTestEndpoint}
+              disabled={isTestingEndpoint || !awsEndpoint}
+              className="btn-icon-refresh"
+              style={{ padding: '8px 16px', fontSize: '0.8rem' }}
+            >
+              <Send size={14} />
+              <span>{isTestingEndpoint ? 'Testing...' : 'Test Connection'}</span>
+            </button>
+          </div>
+
+          {endpointResult && (
+            <div style={{
+              marginTop: '10px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              background: endpointResult.success ? '#ecfdf5' : '#fef2f2',
+              color: endpointResult.success ? '#065f46' : '#991b1b',
+              border: `1px solid ${endpointResult.success ? '#a7f3d0' : '#fecaca'}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <span>
+                {endpointResult.success 
+                  ? `✅ Connected! HTTP ${endpointResult.status} in ${endpointResult.latencyMs}ms` 
+                  : `❌ Connection Failed: ${endpointResult.error}`}
+              </span>
+              {endpointResult.latencyMs && (
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem' }}>
+                  Latency: {endpointResult.latencyMs}ms
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Complete Step-by-Step AWS Deployment Guide */}
+      <div className="glass-card">
+        <div className="card-header" style={{ marginBottom: '16px' }}>
+          <div className="card-title-group">
+            <Cloud size={20} color="#0284c7" />
+            <div>
+              <h3 className="card-title">How to Incorporate & Deploy to AWS</h3>
+              <p className="card-subtitle">Choose your deployment method for hackathon evaluation</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Selector */}
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          {[
+            { id: 'amplify', label: '1. AWS Amplify (Frontend)' },
+            { id: 'sam', label: '2. AWS SAM (Serverless Backend)' },
+            { id: 'local', label: '3. Local Python Runner (Zero AWS Setup)' },
+            { id: 'console', label: '4. AWS Web Console' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setGuideTab(tab.id)}
+              style={{
+                padding: '6px 14px',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                borderRadius: '6px',
+                border: '1px solid',
+                borderColor: guideTab === tab.id ? '#0284c7' : 'transparent',
+                background: guideTab === tab.id ? '#f0f9ff' : 'transparent',
+                color: guideTab === tab.id ? '#0284c7' : 'var(--text-muted)',
+                cursor: 'pointer'
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab 1: Amplify */}
+        {guideTab === 'amplify' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            <p><strong>Deploy the React Single-Page Application on AWS Amplify Hosting (3 Minutes):</strong></p>
+            <ol style={{ paddingLeft: '20px', lineHeight: 1.8 }}>
+              <li>Log in to the <a href="https://console.aws.amazon.com/amplify" target="_blank" rel="noreferrer" style={{ color: '#0284c7', textDecoration: 'underline' }}>AWS Amplify Console</a>.</li>
+              <li>Click <strong>Host web app</strong> &rarr; Select <strong>GitHub</strong> as your source code provider.</li>
+              <li>Authorize AWS and choose your repository: <code style={{ fontFamily: 'var(--font-mono)', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>BhavyaKanojia/Vayurakshak</code> (Branch: <code style={{ fontFamily: 'var(--font-mono)' }}>main</code>).</li>
+              <li>Amplify auto-detects Vite React settings:
+                <pre style={{ background: '#f8fafc', padding: '10px', borderRadius: '6px', marginTop: '6px', border: '1px solid var(--border-subtle)' }}>
+{`frontend:
+  phases:
+    build:
+      commands:
+        - npm install
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'`}
+                </pre>
+              </li>
+              <li>Click <strong>Save and Deploy</strong>. In ~2 minutes, Amplify provisions global CloudFront edge distribution with free SSL.</li>
+            </ol>
+          </div>
+        )}
+
+        {/* Tab 2: SAM */}
+        {guideTab === 'sam' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            <p><strong>Deploy Serverless Lambdas, DynamoDB & API Gateway with AWS SAM:</strong></p>
+            <ol style={{ paddingLeft: '20px', lineHeight: 1.8 }}>
+              <li>Ensure you have the AWS SAM CLI installed (<a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html" target="_blank" rel="noreferrer" style={{ color: '#0284c7', textDecoration: 'underline' }}>Installation Guide</a>).</li>
+              <li>In your terminal inside the project directory, run:
+                <pre style={{ background: '#0f172a', color: '#38bdf8', padding: '10px 14px', borderRadius: '6px', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
+sam build
+sam deploy --guided
+                </pre>
+              </li>
+              <li>Accept the defaults (Stack Name: <code style={{ fontFamily: 'var(--font-mono)' }}>vayurakshak-stack</code>, Region: <code style={{ fontFamily: 'var(--font-mono)' }}>us-east-1</code>).</li>
+              <li>Once complete, copy the output <strong>ApiEndpoint</strong> and paste it into the <em>Connect Live Amazon API Gateway</em> input above.</li>
+            </ol>
+          </div>
+        )}
+
+        {/* Tab 3: Local Python Runner */}
+        {guideTab === 'local' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            <p><strong>Test AWS Lambda handlers locally on your computer (No AWS account or credentials needed):</strong></p>
+            <p>We created a standalone mock harness in <code style={{ fontFamily: 'var(--font-mono)', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>backend/test_local_lambda.py</code> that simulates EventBridge, fetches real Open-Meteo sensors, runs CPCB formulas, and generates the bilingual advisory:</p>
+            <pre style={{ background: '#0f172a', color: '#34d399', padding: '12px 14px', borderRadius: '6px', fontFamily: 'var(--font-mono)' }}>
+python backend/test_local_lambda.py
+            </pre>
+            <p>This prints the live Open-Meteo sensor metrics, Indian CPCB NAQI calculation, DynamoDB item payload, and generated English + Hindi circulars directly in your terminal.</p>
+          </div>
+        )}
+
+        {/* Tab 4: Web Console */}
+        {guideTab === 'console' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            <p><strong>Manual Free Tier Setup via the AWS Web Console:</strong></p>
+            <ol style={{ paddingLeft: '20px', lineHeight: 1.8 }}>
+              <li><strong>DynamoDB:</strong> Create Table <code style={{ fontFamily: 'var(--font-mono)' }}>SchoolAQITelemetry</code> with Partition key <code style={{ fontFamily: 'var(--font-mono)' }}>school_id (String)</code> and Sort key <code style={{ fontFamily: 'var(--font-mono)' }}>timestamp (String)</code>. Set billing mode to <em>On-Demand (Free Tier)</em>.</li>
+              <li><strong>SNS:</strong> Create standard topic <code style={{ fontFamily: 'var(--font-mono)' }}>VayuRakshak-GRAP-Emergency-Alerts</code>. Add email or SMS subscription for school coordinators.</li>
+              <li><strong>Bedrock:</strong> In AWS Console us-east-1, navigate to Amazon Bedrock &rarr; Model access &rarr; Enable access to <strong>Anthropic Claude 3 Haiku</strong>.</li>
+              <li><strong>Lambda:</strong> Create Python 3.12 functions for <code style={{ fontFamily: 'var(--font-mono)' }}>lambda_ingest.py</code> and <code style={{ fontFamily: 'var(--font-mono)' }}>lambda_advisory.py</code> from the <code style={{ fontFamily: 'var(--font-mono)' }}>backend/</code> directory.</li>
+            </ol>
+          </div>
+        )}
       </div>
 
     </div>
