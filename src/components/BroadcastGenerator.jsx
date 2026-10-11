@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Send, 
   Copy, 
   Check, 
   Share2, 
   X, 
-  Smartphone 
+  Smartphone,
+  Volume2,
+  Square,
+  Radio
 } from 'lucide-react';
 import { getGRAPStage } from '../services/grapRules';
+import { speakText, stopSpeaking } from '../services/audioService';
 
 export default function BroadcastGenerator({ aqi, school, onClose }) {
   const grap = getGRAPStage(aqi);
@@ -16,6 +20,34 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
   const [copiedType, setCopiedType] = useState(null);
   const [customPrincipal, setCustomPrincipal] = useState(school.principal || 'Principal Office');
   const [effectiveDate, setEffectiveDate] = useState(new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }));
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingLang, setSpeakingLang] = useState('en');
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
+  const handleSpeak = (lang) => {
+    if (isSpeaking && speakingLang === lang) {
+      stopSpeaking();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const textToSpeak = lang === 'hi' ? hindiText : englishText;
+    setIsSpeaking(true);
+    setSpeakingLang(lang);
+
+    speakText({
+      text: textToSpeak,
+      lang: lang === 'hi' ? 'hi-IN' : 'en-IN',
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false)
+    });
+  };
 
   const generateEnglish = () => {
     let modeText = '';
@@ -160,9 +192,66 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
           </div>
         </div>
 
-        {/* Modal Body: WhatsApp Chat Simulation */}
+        {/* Modal Body: Audio Broadcast & WhatsApp Chat Simulation */}
         <div className="modal-body" style={{ background: '#f1f5f9' }}>
-          <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '640px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            
+            {/* Audio PA Broadcast Player */}
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: '12px',
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: isSpeaking ? '#ecfdf5' : '#f1f5f9', color: isSpeaking ? '#059669' : '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isSpeaking ? <Radio size={18} className="spin-anim" /> : <Volume2 size={18} />}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    Campus PA Announcement & Phone IVR Broadcast
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {isSpeaking ? `Synthesizing speech broadcast (${speakingLang.toUpperCase()})...` : 'Real-time text-to-speech assembly notification'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <button
+                  onClick={() => handleSpeak('en')}
+                  className="btn-icon-refresh"
+                  style={{
+                    background: isSpeaking && speakingLang === 'en' ? '#f0f9ff' : '#ffffff',
+                    borderColor: isSpeaking && speakingLang === 'en' ? '#0284c7' : 'var(--border-subtle)',
+                    color: isSpeaking && speakingLang === 'en' ? '#0284c7' : 'var(--text-secondary)'
+                  }}
+                >
+                  <Volume2 size={13} />
+                  <span>{isSpeaking && speakingLang === 'en' ? 'Stop' : 'Play English'}</span>
+                </button>
+
+                <button
+                  onClick={() => handleSpeak('hi')}
+                  className="btn-icon-refresh"
+                  style={{
+                    background: isSpeaking && speakingLang === 'hi' ? '#ecfdf5' : '#ffffff',
+                    borderColor: isSpeaking && speakingLang === 'hi' ? '#059669' : 'var(--border-subtle)',
+                    color: isSpeaking && speakingLang === 'hi' ? '#059669' : 'var(--text-secondary)'
+                  }}
+                >
+                  <Volume2 size={13} />
+                  <span>{isSpeaking && speakingLang === 'hi' ? 'रोकें' : 'Play हिन्दी'}</span>
+                </button>
+              </div>
+            </div>
+
             <div className="whatsapp-chat-bubble">
               <div className="whatsapp-meta-top">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

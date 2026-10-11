@@ -1571,3 +1571,51 @@ button, input, select, textarea {
   gap: 16px;
   flex-wrap: wrap;
 }
+
+/* ==========================================================================
+   OFFICIAL PRINT / PDF EXPORT STYLES
+   ========================================================================== */
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .app-header,
+  .app-footer,
+  .main-content,
+  .no-print,
+  .modal-overlay:not(:has(.official-circular-dialog)) {
+    display: none !important;
+  }
+
+  .modal-overlay {
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  .modal-dialog {
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    background: #ffffff !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .printable-circular-sheet {
+    box-shadow: none !important;
+    border: 1px solid #000000 !important;
+    padding: 30px !important;
+    width: 100% !important;
+  }
+}
+

@@ -9,6 +9,8 @@ import SchoolDirectory from './components/SchoolDirectory';
 import AWSArchitecture from './components/AWSArchitecture';
 import BroadcastGenerator from './components/BroadcastGenerator';
 import BedrockAIAssistant from './components/BedrockAIAssistant';
+import OfficialCircularModal from './components/OfficialCircularModal';
+import ComplianceCertificateModal from './components/ComplianceCertificateModal';
 
 import { DELHI_NCR_SCHOOLS } from './services/schoolsData';
 import { fetchLiveSchoolAirQuality, getSimulatedAirQuality } from './services/aqiService';
@@ -26,6 +28,8 @@ export default function App() {
   // Modals
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
   const [isBedrockOpen, setIsBedrockOpen] = useState(false);
+  const [isCircularOpen, setIsCircularOpen] = useState(false);
+  const [certificateData, setCertificateData] = useState(null);
 
   useEffect(() => {
     loadData(selectedSchool);
@@ -95,6 +99,8 @@ export default function App() {
               school={selectedSchool}
               onOpenBroadcast={() => setIsBroadcastOpen(true)}
               onOpenBedrock={() => setIsBedrockOpen(true)}
+              onOpenOfficialCircular={() => setIsCircularOpen(true)}
+              onOpenCertificate={(data) => setCertificateData(data)}
             />
 
             {/* Scenario Evaluation Simulator */}
@@ -113,7 +119,7 @@ export default function App() {
           </>
         )}
 
-        {/* TAB 2: Monitored Schools Directory */}
+        {/* TAB 2: Monitored Schools Directory & Geo-Map */}
         {activeTab === 'directory' && (
           <SchoolDirectory
             selectedSchool={selectedSchool}
@@ -157,12 +163,32 @@ export default function App() {
         />
       )}
 
-      {/* Amazon Bedrock AI Copilot Modal */}
+      {/* Amazon Bedrock & Groq AI Copilot Modal */}
       {isBedrockOpen && (
         <BedrockAIAssistant
           aqi={currentAqi}
           school={selectedSchool}
           onClose={() => setIsBedrockOpen(false)}
+        />
+      )}
+
+      {/* Official School Letterhead Statutory Circular Modal */}
+      {isCircularOpen && (
+        <OfficialCircularModal
+          aqi={currentAqi}
+          school={selectedSchool}
+          onClose={() => setIsCircularOpen(false)}
+        />
+      )}
+
+      {/* 100% CAQM Statutory Compliance Audit Certificate Modal */}
+      {certificateData && (
+        <ComplianceCertificateModal
+          aqi={currentAqi}
+          school={selectedSchool}
+          completedTasksCount={certificateData.completedCount}
+          totalTasksCount={certificateData.totalCount}
+          onClose={() => setCertificateData(null)}
         />
       )}
 
