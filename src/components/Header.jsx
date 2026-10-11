@@ -45,10 +45,14 @@ export default function Header({
               }}
               className="custom-select"
             >
-              {DELHI_NCR_SCHOOLS.map((school) => (
-                <option key={school.id} value={school.id} style={{ background: '#ffffff', color: '#0f172a' }}>
-                  {school.shortName} ({school.zone})
-                </option>
+              {Array.from(new Set(DELHI_NCR_SCHOOLS.map(s => s.zone))).map((zone) => (
+                <optgroup key={zone} label={`── ${zone} ──`}>
+                  {DELHI_NCR_SCHOOLS.filter(s => s.zone === zone).map((school) => (
+                    <option key={school.id} value={school.id} style={{ background: '#ffffff', color: '#0f172a' }}>
+                      {school.shortName}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
             <span className="select-arrow">▼</span>
