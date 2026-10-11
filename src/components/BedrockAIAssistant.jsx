@@ -118,12 +118,12 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '1.15rem', color: 'white' }}>Amazon Bedrock AI Copilot</h2>
-                <span className="brand-badge" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', borderColor: 'rgba(168, 85, 247, 0.4)' }}>
+                <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Amazon Bedrock AI Copilot</h2>
+                <span className="brand-badge" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe' }}>
                   Claude 3 Haiku
                 </span>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Principal directives synthesis for {school.shortName} (GRAP {grap.shortCode})
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
         </div>
 
         {/* Tab Selector */}
-        <div style={{ padding: '10px 24px', background: 'rgba(10, 16, 30, 0.9)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', gap: '8px', overflowX: 'auto' }}>
+        <div style={{ padding: '10px 24px', background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', display: 'flex', gap: '8px', overflowX: 'auto' }}>
           <button
             onClick={() => setActiveTab('executive')}
             className={`nav-pill-btn ${activeTab === 'executive' ? 'active' : ''}`}
@@ -172,8 +172,8 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
 
         {/* Modal Body */}
         <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c084fc' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#7c3aed' }}>
               <Cpu size={14} />
               <span>Inference: Bedrock AWS Foundation Model Runtime</span>
             </div>
@@ -187,17 +187,18 @@ export default function BedrockAIAssistant({ aqi, school, onClose }) {
                 style={{
                   padding: '14px 16px',
                   borderRadius: '10px',
-                  background: 'var(--bg-card-inner)',
+                  background: '#ffffff',
                   border: '1px solid var(--border-subtle)',
                   display: 'flex',
                   alignItems: 'flex-start',
-                  gap: '12px'
+                  gap: '12px',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
                 }}
               >
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, flexShrink: 0, marginTop: '2px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ede9fe', color: '#6d28d9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, flexShrink: 0, marginTop: '2px' }}>
                   {idx + 1}
                 </div>
-                <p style={{ fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                   {item}
                 </p>
               </div>

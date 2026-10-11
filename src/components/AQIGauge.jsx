@@ -107,7 +107,7 @@ export default function AQIGauge({ data, school }) {
             <path
               d="M 20 100 A 80 80 0 0 1 180 100"
               fill="none"
-              stroke="#1e293b"
+              stroke="#e2e8f0"
               strokeWidth="14"
               strokeLinecap="round"
             />
@@ -119,7 +119,7 @@ export default function AQIGauge({ data, school }) {
               stroke="url(#aqiArcGradient)"
               strokeWidth="14"
               strokeLinecap="round"
-              opacity="0.9"
+              opacity="0.95"
             />
 
             {/* Needle */}
@@ -129,11 +129,11 @@ export default function AQIGauge({ data, school }) {
                 y1="100"
                 x2="100"
                 y2="28"
-                stroke="#ffffff"
+                stroke="#0f172a"
                 strokeWidth="3.5"
                 strokeLinecap="round"
               />
-              <circle cx="100" cy="100" r="7" fill="#0f172a" stroke="#ffffff" strokeWidth="3" />
+              <circle cx="100" cy="100" r="7" fill="#0f172a" stroke="#ffffff" strokeWidth="2.5" />
             </g>
 
             {/* Range markers */}
@@ -183,8 +183,8 @@ export default function AQIGauge({ data, school }) {
                 <p className="card-subtitle">Real-time monitored concentrations</p>
               </div>
             </div>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-              Campus: <strong style={{ color: '#f8fafc' }}>{school.shortName}</strong>
+            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+              Campus: <strong style={{ color: '#0f172a' }}>{school.shortName}</strong>
             </span>
           </div>
 

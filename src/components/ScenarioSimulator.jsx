@@ -10,11 +10,11 @@ export default function ScenarioSimulator({
   const [customVal, setCustomVal] = useState(currentAqi || 345);
 
   const presets = [
-    { label: 'Normal / Safe', aqi: 75, stage: 'Stage 0', border: 'rgba(16, 185, 129, 0.4)', bg: 'rgba(6, 78, 59, 0.25)', color: '#6ee7b7' },
-    { label: 'GRAP I (Poor)', aqi: 245, stage: 'Stage 1', border: 'rgba(249, 115, 22, 0.4)', bg: 'rgba(124, 45, 18, 0.25)', color: '#fdba74' },
-    { label: 'GRAP II (Very Poor)', aqi: 345, stage: 'Stage 2', border: 'rgba(239, 68, 68, 0.4)', bg: 'rgba(153, 27, 27, 0.25)', color: '#fca5a5' },
-    { label: 'GRAP III (Severe)', aqi: 425, stage: 'Stage 3', border: 'rgba(244, 63, 94, 0.45)', bg: 'rgba(136, 19, 55, 0.3)', color: '#fda4af' },
-    { label: 'GRAP IV (Hazardous)', aqi: 485, stage: 'Stage 4', border: 'rgba(220, 38, 38, 0.6)', bg: 'rgba(127, 29, 29, 0.45)', color: '#fecaca' },
+    { label: 'Normal / Safe', aqi: 75, stage: 'Stage 0', border: '#a7f3d0', bg: '#ecfdf5', color: '#065f46' },
+    { label: 'GRAP I (Poor)', aqi: 245, stage: 'Stage 1', border: '#fed7aa', bg: '#fff7ed', color: '#9a3412' },
+    { label: 'GRAP II (Very Poor)', aqi: 345, stage: 'Stage 2', border: '#fecdd3', bg: '#fff1f2', color: '#9f1239' },
+    { label: 'GRAP III (Severe)', aqi: 425, stage: 'Stage 3', border: '#fda4af', bg: '#ffe4e6', color: '#881337' },
+    { label: 'GRAP IV (Hazardous)', aqi: 485, stage: 'Stage 4', border: '#fbcfe8', bg: '#fdf2f8', color: '#701a75' },
   ];
 
   return (
@@ -32,7 +32,7 @@ export default function ScenarioSimulator({
           <button
             onClick={onResetLive}
             className="btn-icon-refresh"
-            style={{ color: '#34d399', borderColor: 'rgba(52, 211, 153, 0.4)' }}
+            style={{ color: '#059669', borderColor: 'rgba(16, 185, 129, 0.4)' }}
           >
             <RotateCcw size={14} />
             <span>Reset to Live Feeds</span>
@@ -63,7 +63,7 @@ export default function ScenarioSimulator({
       {/* Custom Slider Input */}
       <div className="slider-action-row">
         <div className="slider-group">
-          <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             Custom AQI:
           </span>
           <input
@@ -75,7 +75,7 @@ export default function ScenarioSimulator({
             onChange={(e) => setCustomVal(Number(e.target.value))}
             className="custom-slider"
           />
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.1rem', color: 'white', minWidth: '40px' }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)', minWidth: '40px' }}>
             {customVal}
           </span>
         </div>

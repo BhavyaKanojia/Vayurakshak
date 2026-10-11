@@ -46,7 +46,7 @@ export default function Header({
               className="custom-select"
             >
               {DELHI_NCR_SCHOOLS.map((school) => (
-                <option key={school.id} value={school.id} style={{ background: '#0f172a', color: '#f8fafc' }}>
+                <option key={school.id} value={school.id} style={{ background: '#ffffff', color: '#0f172a' }}>
                   {school.shortName} ({school.zone})
                 </option>
               ))}
@@ -68,10 +68,10 @@ export default function Header({
         {/* Navigation & CTAs */}
         <div className="header-actions">
           {/* Live Status Pill */}
-          <div className="live-feed-pill" style={{ color: isSimulated ? '#fbbf24' : '#34d399' }}>
+          <div className="live-feed-pill" style={{ color: isSimulated ? '#d97706' : '#059669' }}>
             <span 
               className="live-dot" 
-              style={{ background: isSimulated ? '#fbbf24' : '#34d399' }} 
+              style={{ background: isSimulated ? '#f59e0b' : '#10b981' }} 
             />
             <span>{isSimulated ? `SIM: ${scenarioName}` : 'LIVE FEED'}</span>
           </div>

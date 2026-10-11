@@ -154,7 +154,7 @@ export default function AWSArchitecture() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       
       {/* Top Banner */}
-      <div className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.9), rgba(13,21,39,0.95))' }}>
+      <div className="glass-card" style={{ background: 'linear-gradient(135deg, #ffffff, #f0fdf4)', borderColor: '#bbf7d0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div className="brand-icon-box" style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)' }}>
@@ -162,12 +162,12 @@ export default function AWSArchitecture() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '1.25rem', color: 'white' }}>100% Serverless AWS Architecture</h2>
-                <span className="brand-badge" style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#6ee7b7', borderColor: 'rgba(16, 185, 129, 0.4)' }}>
+                <h2 style={{ fontSize: '1.25rem', color: 'var(--text-primary)' }}>100% Serverless AWS Architecture</h2>
+                <span className="brand-badge" style={{ background: '#ecfdf5', color: '#059669', borderColor: '#a7f3d0' }}>
                   Zero-Cost Verified
                 </span>
               </div>
-              <p style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 Built for Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function AWSArchitecture() {
             className="btn-icon-refresh"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
-            {copiedCode ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+            {copiedCode ? <Check size={14} color="#059669" /> : <Copy size={14} />}
             <span>{copiedCode ? 'Copied SAM Command!' : 'sam deploy --guided'}</span>
           </button>
         </div>
@@ -188,13 +188,13 @@ export default function AWSArchitecture() {
       <div className="glass-card">
         <div className="card-header">
           <div className="card-title-group">
-            <Cpu size={20} color="#06b6d4" />
+            <Cpu size={20} color="#0284c7" />
             <div>
               <h3 className="card-title">Interactive Serverless Flowchart</h3>
               <p className="card-subtitle">Click any cloud node to inspect its live data contract, IAM policy, and free tier quota</p>
             </div>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>8 Microservice Components</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>8 Microservice Components</span>
         </div>
 
         <div className="arch-nodes-grid">
@@ -219,21 +219,21 @@ export default function AWSArchitecture() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `${node.color}25`, border: `1px solid ${node.color}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: node.color }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `${node.color}15`, border: `1px solid ${node.color}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: node.color }}>
                       <Icon size={16} />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: '0.85rem', color: 'white', lineHeight: 1.2 }}>{node.title}</h4>
-                      <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>{node.category}</span>
+                      <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.2 }}>{node.title}</h4>
+                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{node.category}</span>
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '0.75rem', color: '#cbd5e1', lineHeight: 1.4 }}>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
                     {node.description}
                   </p>
                 </div>
 
-                <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#06b6d4', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#0284c7', fontFamily: 'var(--font-mono)' }}>
                   <span>Inspect Spec</span>
                   <span>→</span>
                 </div>
@@ -249,33 +249,33 @@ export default function AWSArchitecture() {
         {/* Left: Spec Details */}
         <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: `${activeNode.color}25`, border: `1px solid ${activeNode.color}50`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: activeNode.color }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: `${activeNode.color}15`, border: `1px solid ${activeNode.color}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: activeNode.color }}>
               <activeNode.icon size={22} />
             </div>
             <div>
-              <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', padding: '2px 6px', background: 'rgba(30,41,59,0.8)', borderRadius: '4px', color: '#cbd5e1' }}>
+              <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', padding: '2px 6px', background: '#f1f5f9', borderRadius: '4px', color: '#475569' }}>
                 {activeNode.category}
               </span>
-              <h3 style={{ fontSize: '1.1rem', color: 'white', marginTop: '4px' }}>{activeNode.title}</h3>
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginTop: '4px' }}>{activeNode.title}</h3>
             </div>
           </div>
 
-          <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             {activeNode.description}
           </p>
 
-          <div style={{ background: 'var(--bg-card-inner)', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '4px' }}>
-              <DollarSign size={14} color="#10b981" />
+          <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+              <DollarSign size={14} color="#059669" />
               <span>Free Tier Quota</span>
             </div>
-            <strong style={{ fontSize: '0.85rem', color: '#6ee7b7', fontFamily: 'var(--font-mono)' }}>
+            <strong style={{ fontSize: '0.85rem', color: '#059669', fontFamily: 'var(--font-mono)' }}>
               {activeNode.cost}
             </strong>
           </div>
 
           <div style={{ fontSize: '0.72rem', color: '#64748b', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)' }}>
-            Declared in <span style={{ fontFamily: 'var(--font-mono)', color: '#06b6d4' }}>template.yaml</span> under AWS SAM Infrastructure-as-Code definitions.
+            Declared in <span style={{ fontFamily: 'var(--font-mono)', color: '#0284c7' }}>template.yaml</span> under AWS SAM Infrastructure-as-Code definitions.
           </div>
         </div>
 
@@ -283,8 +283,8 @@ export default function AWSArchitecture() {
         <div className="glass-card">
           <div className="card-header" style={{ marginBottom: '12px' }}>
             <div className="card-title-group">
-              <Code2 size={18} color="#06b6d4" />
-              <h4 style={{ fontSize: '0.85rem', color: 'white', fontFamily: 'var(--font-mono)' }}>
+              <Code2 size={18} color="#0284c7" />
+              <h4 style={{ fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                 Live Data Contract & JSON Payload
               </h4>
             </div>
@@ -299,7 +299,7 @@ export default function AWSArchitecture() {
 
           <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
             <span>Verified compatibility with Python 3.12 & boto3</span>
-            <span style={{ fontFamily: 'var(--font-mono)', color: '#10b981', fontWeight: 700 }}>$0.00 / month</span>
+            <span style={{ fontFamily: 'var(--font-mono)', color: '#059669', fontWeight: 700 }}>$0.00 / month</span>
           </div>
         </div>
 

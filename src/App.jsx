@@ -135,8 +135,8 @@ export default function App() {
       <footer className="app-footer">
         <div className="footer-inner">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Shield size={16} color="#06b6d4" />
-            <strong style={{ color: '#e2e8f0' }}>VayuRakshak Platform</strong>
+            <Shield size={16} color="#0284c7" />
+            <strong style={{ color: 'var(--text-primary)' }}>VayuRakshak Platform</strong>
             <span>• Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)</span>
           </div>
 

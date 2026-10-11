@@ -72,15 +72,15 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
               <span className="ping-dot" />
               <span>{grapData.schoolMode}</span>
             </div>
-            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-              Campus: <strong style={{ color: '#e2e8f0' }}>{school.shortName}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+              Campus: <strong style={{ color: 'var(--text-primary)' }}>{school.shortName}</strong>
             </span>
           </div>
 
         </div>
 
-        <div style={{ fontSize: '0.8rem', color: '#cbd5e1', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <strong style={{ color: 'white' }}>CAQM Directives: </strong>
+        <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+          <strong style={{ color: 'var(--text-primary)' }}>CAQM Directives: </strong>
           <span>{grapData.overview}</span>
         </div>
       </div>
@@ -118,8 +118,8 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
       {/* Compliance Progress Bar */}
       <div className="compliance-progress-box">
         <div className="progress-header-row">
-          <span style={{ color: '#94a3b8' }}>
-            Action Items: <strong style={{ color: 'white' }}>{completedCount} of {totalCount} Complied</strong>
+          <span style={{ color: 'var(--text-muted)' }}>
+            Action Items: <strong style={{ color: 'var(--text-primary)' }}>{completedCount} of {totalCount} Complied</strong>
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontWeight: 800, color: isAllCompleted ? '#34d399' : '#38bdf8' }}>
@@ -203,7 +203,7 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
           <Bus size={18} color="#06b6d4" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
             <strong>Transport Fleet Rule: </strong>
-            <span style={{ color: '#94a3b8' }}>{grapData.transportRule}</span>
+            <span style={{ color: 'var(--text-secondary)' }}>{grapData.transportRule}</span>
           </div>
         </div>
 
@@ -211,7 +211,7 @@ export default function GRAPActionCenter({ aqi, school, onOpenBroadcast, onOpenB
           <Wind size={18} color="#06b6d4" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
             <strong>Mask Protection Protocol: </strong>
-            <span style={{ color: '#94a3b8' }}>{grapData.maskRecommendation}</span>
+            <span style={{ color: 'var(--text-secondary)' }}>{grapData.maskRecommendation}</span>
           </div>
         </div>
       </div>

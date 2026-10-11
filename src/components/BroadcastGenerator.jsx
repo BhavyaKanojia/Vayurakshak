@@ -92,8 +92,8 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
               <Send size={18} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.15rem', color: 'white' }}>Bilingual Parent Broadcast Dispatcher</h2>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Bilingual Parent Broadcast Dispatcher</h2>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Instant statutory circulars for {school.shortName} (GRAP {grap.shortCode})
               </p>
             </div>
@@ -105,9 +105,9 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
         </div>
 
         {/* Configuration Bar */}
-        <div style={{ padding: '14px 24px', background: 'rgba(10, 16, 30, 0.9)', borderBottom: '1px solid var(--border-subtle)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', fontSize: '0.78rem' }}>
+        <div style={{ padding: '14px 24px', background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', fontSize: '0.78rem' }}>
           <div>
-            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Target Group:</label>
+            <label style={{ display: 'block', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Target Group:</label>
             <select
               value={recipientGroup}
               onChange={(e) => setRecipientGroup(e.target.value)}
@@ -122,7 +122,7 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
           </div>
 
           <div>
-            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Principal Signature:</label>
+            <label style={{ display: 'block', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Principal Signature:</label>
             <input
               type="text"
               value={customPrincipal}
@@ -133,7 +133,7 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
           </div>
 
           <div>
-            <label style={{ display: 'block', color: '#94a3b8', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Language:</label>
+            <label style={{ display: 'block', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>Language:</label>
             <div className="nav-pill-group" style={{ padding: '2px' }}>
               <button
                 onClick={() => setActiveLang('both')}
@@ -161,12 +161,12 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
         </div>
 
         {/* Modal Body: WhatsApp Chat Simulation */}
-        <div className="modal-body" style={{ background: '#080c16' }}>
+        <div className="modal-body" style={{ background: '#f1f5f9' }}>
           <div style={{ maxWidth: '640px', margin: '0 auto' }}>
             <div className="whatsapp-chat-bubble">
               <div className="whatsapp-meta-top">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Smartphone size={14} color="#34d399" />
+                  <Smartphone size={14} color="#059669" />
                   <span>Official WhatsApp Broadcast Preview</span>
                 </div>
                 <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -181,7 +181,7 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
               {activeLang === 'both' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div style={{ whiteSpace: 'pre-line', fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>{englishText}</div>
-                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px', whiteSpace: 'pre-line', fontSize: '0.8rem' }}>{hindiText}</div>
+                  <div style={{ borderTop: '1px solid #bbf7d0', paddingTop: '12px', whiteSpace: 'pre-line', fontSize: '0.8rem' }}>{hindiText}</div>
                 </div>
               )}
             </div>
