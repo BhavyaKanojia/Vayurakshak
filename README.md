@@ -215,6 +215,8 @@ sam deploy --guided
 
 - **Bhavya Kanojia** ([@BhavyaKanojia](https://github.com/BhavyaKanojia))
 - **Abhinav Singh** ([@abhinavsinghcs27](https://github.com/abhinavsinghcs27))
+- **Riya Sharma** ([@riya6333sharma-cell](https://github.com/riya6333sharma-cell))
+- **Ayush Pandey** ([@ayushp1603](https://github.com/ayushp1603))
 
 > **Event:** Environmental Hacks | Bharat Builds Tour (WeMakeDevs & AWS)  
 > **Built With:** AWS Lambda, Amazon DynamoDB, Amazon Bedrock, Amazon SNS, Amazon EventBridge, Amazon API Gateway, AWS Amplify, Groq AI, React 18, Vite, Web Speech API, Open-Meteo, CPCB CAAQMS.
