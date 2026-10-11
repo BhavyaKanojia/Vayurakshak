@@ -15,9 +15,82 @@ BEDROCK_MODEL_ID = os.environ.get('BEDROCK_MODEL_ID', 'anthropic.claude-3-haiku-
 bedrock_runtime = boto3.client('bedrock-runtime', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 sns = boto3.client('sns', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 
+def get_groq_api_key():
+    key = os.environ.get('GROQ_API_KEY') or os.environ.get('VITE_GROQ_API_KEY')
+    if key:
+        return key.strip()
+    # Read from local .env if present (ignored in git)
+    env_file = os.path.join(os.path.dirname(__file__), '..', '.env')
+    if os.path.exists(env_file):
+        try:
+            with open(env_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if '=' in line and not line.strip().startswith('#'):
+                        parts = line.strip().split('=', 1)
+                        if parts[0] in ('GROQ_API_KEY', 'VITE_GROQ_API_KEY'):
+                            return parts[1].strip().strip('"\'')
+        except Exception:
+            pass
+    return ''
+
+GROQ_API_KEY = get_groq_api_key()
+
+def generate_groq_advisory_backend(school_name, aqi, grap_stage, dominant_pollutant):
+    import urllib.request
+    
+    prompt = f"""You are VayuRakshak AI, an environmental compliance assistant for Delhi-NCR schools under CAQM GRAP mandates.
+Generate an official advisory for:
+School: {school_name}
+Current AQI: {aqi} (CPCB NAQI)
+GRAP Stage: Stage {grap_stage}
+Dominant Pollutant: {dominant_pollutant}
+
+Provide:
+1. Short Principal Executive Summary (2 bullet points)
+2. English WhatsApp Broadcast for Parents
+3. Hindi WhatsApp Broadcast for Parents (formal हिंदी)
+
+Respond strictly with a valid JSON object matching:
+{{
+  "executive_summary": ["Directive 1", "Directive 2"],
+  "english_broadcast": "formatted text",
+  "hindi_broadcast": "formatted text"
+}}"""
+
+    candidates = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile']
+    for model in candidates:
+        try:
+            req_data = json.dumps({
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": "You are VayuRakshak AI, an environmental legal compliance assistant. Return valid JSON only."},
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.2
+            }).encode('utf-8')
+
+            req = urllib.request.Request(
+                "https://api.groq.com/openai/v1/chat/completions",
+                data=req_data,
+                headers={
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "VayuRakshak/1.0"
+                }
+            )
+            with urllib.request.urlopen(req, timeout=12) as response:
+                res_body = json.loads(response.read().decode('utf-8'))
+                content = res_body['choices'][0]['message']['content']
+                return json.loads(content)
+        except Exception:
+            continue
+    raise Exception("Groq backend generation was unable to complete")
+
 def generate_ai_advisory(school_name, aqi, grap_stage, dominant_pollutant):
     """
     Call Amazon Bedrock to synthesize customized bilingual circular and principal action plan.
+    Falls back to Groq Cloud and then deterministic statutory templates.
     """
     prompt = f"""You are VayuRakshak AI, an environmental compliance assistant for Delhi-NCR schools.
 Generate an official advisory for:
@@ -54,7 +127,6 @@ Format output as clean JSON with keys: "executive_summary", "english_broadcast",
         
         # Try to parse JSON from response
         try:
-            # Extract JSON block if surrounded by markdown code block
             if "```json" in raw_text:
                 json_str = raw_text.split("```json")[1].split("```")[0].strip()
             elif "```" in raw_text:
@@ -67,8 +139,14 @@ Format output as clean JSON with keys: "executive_summary", "english_broadcast",
             
     except Exception as e:
         print(f"Bedrock invocation fallback: {e}")
-        # Deterministic zero-latency fallback template
-        return get_fallback_advisory(school_name, aqi, grap_stage)
+        # Try Groq AI Cloud
+        try:
+            print("[+] Routing to Groq AI inference engine...")
+            return generate_groq_advisory_backend(school_name, aqi, grap_stage, dominant_pollutant)
+        except Exception as groq_err:
+            print(f"Groq invocation fallback: {groq_err}")
+            # Deterministic zero-latency fallback template
+            return get_fallback_advisory(school_name, aqi, grap_stage)
 
 def get_fallback_advisory(school_name, aqi, grap_stage):
     if grap_stage >= 4:

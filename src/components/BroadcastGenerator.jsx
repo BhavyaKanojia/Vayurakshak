@@ -8,10 +8,14 @@ import {
   Smartphone,
   Volume2,
   Square,
-  Radio
+  Radio,
+  Sparkles,
+  AlertCircle,
+  RotateCcw
 } from 'lucide-react';
 import { getGRAPStage } from '../services/grapRules';
 import { speakText, stopSpeaking } from '../services/audioService';
+import { generateGroqBroadcast } from '../services/groqService';
 
 export default function BroadcastGenerator({ aqi, school, onClose }) {
   const grap = getGRAPStage(aqi);
@@ -22,6 +26,11 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
   const [effectiveDate, setEffectiveDate] = useState(new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }));
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speakingLang, setSpeakingLang] = useState('en');
+
+  // Live Groq AI State
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+  const [aiBroadcast, setAiBroadcast] = useState(null);
+  const [aiError, setAiError] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -97,8 +106,30 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
     return `🛡️ *${school.name}*\n*आधिकारिक अभिभावक सूचना (परिपत्र)*\n*दिनांक:* ${effectiveDate} | *वर्तमान AQI:* ${aqi} (${grap.shortCode})\n\n${modeTextHi}\n\nआदरणीय अभिभावक,\nवायु गुणवत्ता प्रबंधन आयोग (CAQM) एवं शिक्षा निदेशालय के वैधानिक दिशा-निर्देशों के अनुपालन में निम्न निर्णय लिए गए हैं:\n\n${rulesTextHi}\n\nकृपया सुनिश्चित करें कि आपका बच्चा मास्क पहनकर ही बाहर निकले।\n\nसस्नेह,\n*${customPrincipal}*\n${school.name}`;
   };
 
-  const englishText = generateEnglish();
-  const hindiText = generateHindi();
+  const handleGenerateAIBroadcast = async () => {
+    setIsAiGenerating(true);
+    setAiError(null);
+    try {
+      const res = await generateGroqBroadcast({
+        aqi,
+        school,
+        grapStage: grap.shortCode,
+        recipientGroup
+      });
+      if (res?.englishText) {
+        setAiBroadcast(res);
+      }
+    } catch (err) {
+      setAiError(err.message || 'Failed to generate AI broadcast');
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
+  const defaultEnglishText = generateEnglish();
+  const defaultHindiText = generateHindi();
+  const englishText = aiBroadcast?.englishText || defaultEnglishText;
+  const hindiText = aiBroadcast?.hindiText || defaultHindiText;
   const combinedText = `${englishText}\n\n====================================\n\n${hindiText}`;
 
   const copyToClipboard = (text, type) => {
@@ -124,7 +155,12 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
               <Send size={18} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Bilingual Parent Broadcast Dispatcher</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Bilingual Parent Broadcast Dispatcher</h2>
+                <span className="brand-badge" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe' }}>
+                  Groq AI Active
+                </span>
+              </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Instant statutory circulars for {school.shortName} (GRAP {grap.shortCode})
               </p>
@@ -191,6 +227,53 @@ export default function BroadcastGenerator({ aqi, school, onClose }) {
             </div>
           </div>
         </div>
+
+        {/* AI Polish Bar */}
+        <div style={{ padding: '10px 24px', background: '#f5f3ff', borderBottom: '1px solid #ddd6fe', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="brand-badge" style={{ background: '#ede9fe', color: '#6d28d9', borderColor: '#c4b5fd' }}>
+              Groq LLaMA / OSS
+            </span>
+            <span style={{ fontSize: '0.75rem', color: '#6d28d9', fontWeight: 500 }}>
+              {aiBroadcast ? '✨ AI-Generated Custom Circular Active' : 'Standard Statutory Circular Ready'}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {aiBroadcast && (
+              <button
+                onClick={() => setAiBroadcast(null)}
+                className="btn-icon-refresh"
+                style={{ fontSize: '0.72rem', padding: '5px 8px' }}
+                title="Revert to standard template"
+              >
+                <RotateCcw size={13} />
+                <span>Reset to Standard</span>
+              </button>
+            )}
+
+            <button
+              onClick={handleGenerateAIBroadcast}
+              disabled={isAiGenerating}
+              className="btn-broadcast-cta"
+              style={{
+                padding: '6px 14px',
+                fontSize: '0.75rem',
+                background: 'linear-gradient(135deg, #7c3aed, #4f46e5)'
+              }}
+            >
+              <Sparkles size={14} className={isAiGenerating ? 'spin-anim' : ''} />
+              <span>{isAiGenerating ? 'Synthesizing with Groq AI...' : '✨ AI Polish with Groq'}</span>
+            </button>
+          </div>
+        </div>
+
+        {aiError && (
+          <div style={{ padding: '8px 24px', background: '#fff1f2', borderBottom: '1px solid #fecdd3', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', color: '#be123c' }}>
+            <AlertCircle size={14} />
+            <span>{aiError}</span>
+          </div>
+        )}
 
         {/* Modal Body: Audio Broadcast & WhatsApp Chat Simulation */}
         <div className="modal-body" style={{ background: '#f1f5f9' }}>
